@@ -12,7 +12,7 @@ import android.util.Log;
 public class ChatDatabaseHelper extends SQLiteOpenHelper {
 
     protected static final String ACTIVITY_NAME = "ChatDatabaseHelper";
-    private static final int VERSION_NUM = 2;
+    private static final int VERSION_NUM = 6;
     public static final String TABLE_NAME = "Chats";
     public static final String DATABASE_NAME = "Chats.db";
     public static final String NAME_COLUMN = "NAME";

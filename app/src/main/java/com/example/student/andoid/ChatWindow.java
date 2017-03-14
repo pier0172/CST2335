@@ -61,17 +61,20 @@ public class ChatWindow extends AppCompatActivity {
                 new String[]{chatDatabaseHelper.KEY_ID, chatDatabaseHelper.KEY_MESSAGE},
                 chatDatabaseHelper.KEY_MESSAGE + " not null", null, null, null, null, null);   //NOT SURE
         int rows = results.getCount(); //number of rows returned
+        //int keyMassage = results.getColumnIndex(chatDatabaseHelper.KEY_MESSAGE);
         results.moveToFirst(); //move to first result
 
-        while (!results.isAfterLast())
+        while (!results.isAfterLast()) {
             Log.i(ACTIVITY_NAME, "SQL MESSAGE:" + results.getString(results.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)));
-
-        Log.i(ACTIVITY_NAME, "Cursor’s  column count =" + results.getColumnCount());
-
+            arrayList.add(results.getString(results.getColumnIndex(chatDatabaseHelper.KEY_MESSAGE)));   // To print message list on screen
+            results.moveToNext();
+            Log.i(ACTIVITY_NAME, "Cursor’s  column count =" + results.getColumnCount());
+        }
         // not sure 
         String columnName;
         for (int i = 0; i > results.getColumnCount(); i++) {
             Log.i(ACTIVITY_NAME, "column name =" + results.getColumnName(i));
+
         }     //column name
 
         //  lab5 from example
