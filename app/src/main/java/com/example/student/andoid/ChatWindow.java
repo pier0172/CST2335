@@ -3,6 +3,7 @@ package com.example.student.andoid;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,9 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,9 +29,12 @@ public class ChatWindow extends AppCompatActivity {
     protected EditText editChatText;
     protected ChatDatabaseHelper chatDatabaseHelper;
     protected SQLiteDatabase db;
-//    protected Button sendButton;
-    //protected int numItems = 4;
-    // private static String TAG = "LISTVIEW";
+
+    private FrameLayout frameLayout;
+
+    private boolean checkFrameExist;
+    private boolean isTablet;
+    private static String TAG = "LISTVIEW";
 
     ArrayList<String> arrayList = new ArrayList<String>();
 
@@ -39,6 +45,13 @@ public class ChatWindow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //in this case, “this” is the ChatWindow, which is-A Context object
         setContentView(R.layout.activity_chat_window);
+
+        frameLayout = (FrameLayout) findViewById(R.id.frame);
+        if(frameLayout == null)
+            checkFrameExist = false;
+        else
+            checkFrameExist = true;
+
 
         editChatText = (EditText) findViewById(R.id.editChatText);
 
@@ -77,40 +90,7 @@ public class ChatWindow extends AppCompatActivity {
 
         }     //column name
 
-        //  lab5 from example
-//        SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(this, R.layout.activity_chat_window, results,
-//                new String[]{ chatDatabaseHelper.KEY_MESSAGE}, //from column    chatDatabaseHelper.KEY_ID,
-//                new int[]{R.id.theList}, 0  //to layout ID
-//        );
-        //theList.setAdapter(messageAdapter);
 
-//        //int numColumns = results.getColumnCount();//how many columns are returned
-//        int keyID = results.getColumnIndex(chatDatabaseHelper.KEY_ID); //find the index of the name column
-//        int keyMassage = results.getColumnIndex(chatDatabaseHelper.KEY_MESSAGE);
-//        while (!results.isAfterLast()) {
-//            int price = results.getInt(priceIndex); //get int from column 0
-//            String name = results.getString(columnName);
-//            Log.d("DATABASE ", "Price:" + Integer.toString(price) + " name:" + name);
-//            results.moveToNext();
-//        }
-
-
-        //lab4
-        // setContentView(R.layout.activity_chat_window);
-
-        // Button sendButton = (Button)findViewById(R.id.sendButton);
-        // Button sendButton = (Button)findViewById(R.id.sendButton);
-
-
-//        theList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Log.d(TAG, "onItemClick: " + i + " " + l);
-//               //messageAdapter.notifyDataSetChanged(); //this restarts the process of getCount()/getView()
-//            }
-//        });
-
-        //editChatText = (EditText)findViewById(R.id.editChatText);
 
         Button sendButton = (Button) findViewById(R.id.sendButton);
 
@@ -131,6 +111,46 @@ public class ChatWindow extends AppCompatActivity {
             }
 
         });
+
+
+
+
+        // lab7 #6
+
+        theList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "onItemClick: " + i + " " + l);
+
+
+                Bundle bun = new Bundle();
+                bun.putLong("ID", l );//l is the database ID of selected item
+bun.putString("MESSAGE", arrayList.get(i));
+
+                //step 2, if a tablet, insert fragment into FrameLayout, pass data
+                if(isTablet) {
+                    MessageFragment frag = new MessageFragment();  //?? not sure
+
+                    frag.setArguments(bun);
+
+
+                    getFragmentManager().beginTransaction().add(R.id.activity_message_details, frag).commit();  // was fragmentholder
+                }
+                //step 3 if a phone, transition to empty Activity that has FrameLayout
+                else //isPhone
+                {
+                    Intent intnt = new Intent(ChatWindow.this, MessageFragment.class);
+                    intnt.putExtra("ID" , l); //pass the Database ID to next activity
+                    startActivity(intnt); //go to view fragment details
+                }
+            }
+        });
+        //step 1, find out if you are on a phone or tablet.
+        isTablet = (findViewById(R.id.activity_message_details) != null); //find out if this is a phone or tablet
+
+
+        //adapter.notifyDataSetChanged(); //tells the list to update the data
+
     }
 
     public void onDestroy(){
