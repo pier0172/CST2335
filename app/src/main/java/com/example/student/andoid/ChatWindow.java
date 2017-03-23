@@ -44,7 +44,8 @@ public class ChatWindow extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //in this case, “this” is the ChatWindow, which is-A Context object
-        setContentView(R.layout.activity_chat_window);
+
+        setContentView(R.layout.activity_chat_window); //chooses tablet or phone layout
 
         frameLayout = (FrameLayout) findViewById(R.id.frame);
         if(frameLayout == null)
@@ -125,7 +126,7 @@ public class ChatWindow extends AppCompatActivity {
 
                 Bundle bun = new Bundle();
                 bun.putLong("ID", l );//l is the database ID of selected item
-bun.putString("MESSAGE", arrayList.get(i));
+                bun.putString("MESSAGE", arrayList.get(i));
 
                 //step 2, if a tablet, insert fragment into FrameLayout, pass data
                 if(isTablet) {
@@ -134,22 +135,22 @@ bun.putString("MESSAGE", arrayList.get(i));
                     frag.setArguments(bun);
 
 
-                    getFragmentManager().beginTransaction().add(R.id.activity_message_details, frag).commit();  // was fragmentholder
+                    getFragmentManager().beginTransaction().add(R.id.frame, frag).commit();  // was fragmentholder
                 }
                 //step 3 if a phone, transition to empty Activity that has FrameLayout
                 else //isPhone
                 {
-                    Intent intnt = new Intent(ChatWindow.this, MessageFragment.class);
+                    Intent intnt = new Intent(ChatWindow.this, MessageDetails.class);
                     intnt.putExtra("ID" , l); //pass the Database ID to next activity
                     startActivity(intnt); //go to view fragment details
                 }
             }
         });
         //step 1, find out if you are on a phone or tablet.
-        isTablet = (findViewById(R.id.activity_message_details) != null); //find out if this is a phone or tablet
+        isTablet = (findViewById(R.id.frame) != null); //find out if this is a phone or tablet
 
 
-        //adapter.notifyDataSetChanged(); //tells the list to update the data
+        messageAdapter.notifyDataSetChanged(); //tells the list to update the data             not--sure
 
     }
 
@@ -201,6 +202,16 @@ bun.putString("MESSAGE", arrayList.get(i));
 
     }
 
+    //lab7 #8
 
-
+//    public void onActivityResult(int requestCode, int responseCode, Intent data)
+//    {
+//        if (requestCode==5)
+//            Log.i(ACTIVITY_NAME, "Return to StartActivity.onActivityResult");
+//        if(responseCode == Activity.RESULT_OK){
+//            String messagePassed = data.getStringExtra("Response");
+//            Toast toast = Toast.makeText(this, messagePassed, Toast.LENGTH_LONG); //this is the ListActivity
+//            toast.show(); //display your message box
+//        }
+//    }
 }

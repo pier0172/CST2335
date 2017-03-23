@@ -20,10 +20,12 @@ String message;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Step 3, create fragment onCreation, pass data from Intent Extras to FragmentTransction
 Bundle data = getArguments();
        message = data.getString("MESSAGE");
         id = data.getLong("ID");
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -31,10 +33,16 @@ Bundle data = getArguments();
         View gui = inflater.inflate(R.layout.fragment_fragment_layout1, null); // or messageDetail
 
         TextView messageDetailsText = (TextView)gui.findViewById(R.id.messageDetailsText);
-        messageDetailsText.setText("You clicked on ID:" + id);
+        messageDetailsText.setText("You clicked on message:" + message);
 
-        //find button and add click listener
+        TextView iDMessageText = (TextView)gui.findViewById(R.id.iDMessageText);
+        iDMessageText.setText("You clicked on ID:" + id);
+
+
+
+      //  find button and add click listener
 //        Button sendButton = (Button) findViewById(R.id.deleteMessageButton);
+//
 //
 //        sendButton.setOnClickListener(new View.OnClickListener() {
 //            @Override

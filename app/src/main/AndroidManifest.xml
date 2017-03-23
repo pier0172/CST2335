@@ -29,6 +29,7 @@
         <activity android:name=".WeatherForecast" />
         <activity android:name=".MessageDetails" />
 
+
     </application>
 
 </manifest>
