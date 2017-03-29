@@ -80,6 +80,26 @@ public class StartActivity extends Activity {
             }
         });
 
+
+        // lab 8
+
+        Button testToolbar = (Button)findViewById(R.id.testToolbar);  // button??  reference
+
+        testToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Log.i("Button1", "Return to StartActivity.onActivityResult");
+
+                Intent intent4 = new Intent(StartActivity.this, TestToolbar.class);
+                //startActivity(intent);
+                startActivityForResult(intent4,5);
+
+
+                Log.i(ACTIVITY_NAME, "User clicked StartActivity.TestToolbar");
+
+
+            }
+        });
     }
 
     protected void  onResume(){

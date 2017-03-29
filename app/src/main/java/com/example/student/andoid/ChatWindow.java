@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static android.R.id.message;
+
 public class ChatWindow extends AppCompatActivity {
 
     private static final String ACTIVITY_NAME = "ChatWindow";
@@ -35,6 +37,7 @@ public class ChatWindow extends AppCompatActivity {
     private boolean checkFrameExist;
     private boolean isTablet;
     private static String TAG = "LISTVIEW";
+    ChatAdapter messageAdapter;
 
     ArrayList<String> arrayList = new ArrayList<String>();
 
@@ -66,7 +69,7 @@ public class ChatWindow extends AppCompatActivity {
         theList = (ListView) findViewById(R.id.theList);
 
 
-        final ChatAdapter messageAdapter = new ChatAdapter(this);   //not final??????????
+         messageAdapter = new ChatAdapter(this);   //not final??????????
         theList.setAdapter(messageAdapter);
 
 
@@ -142,6 +145,7 @@ public class ChatWindow extends AppCompatActivity {
                 {
                     Intent intnt = new Intent(ChatWindow.this, MessageDetails.class);
                     intnt.putExtra("ID" , l); //pass the Database ID to next activity
+                    intnt.putExtra("Message" , message); //pass the Database meessagge to next activity
                     startActivity(intnt); //go to view fragment details
                 }
             }
@@ -202,16 +206,24 @@ public class ChatWindow extends AppCompatActivity {
 
     }
 
+    public void deleteDb(long index, long dbid){
+        Log.d("INDEX LOOKS: ", index+ "");
+        arrayList.remove(index);
+        Log.d("DBID LOOKS: ", dbid+ ""); //dbid
+        db.delete(ChatDatabaseHelper.TABLE_NAME , ChatDatabaseHelper.KEY_ID + "="+ dbid, null); //databse Name?????????????  KEY_MESSAGE  TABLE_NAME
+        messageAdapter.notifyDataSetChanged();
+    }
+
     //lab7 #8
 
-//    public void onActivityResult(int requestCode, int responseCode, Intent data)
-//    {
-//        if (requestCode==5)
+//    public void onActivityResult(int requestCode, int responseCode, Intent data) {
+//        if (requestCode == 5)
 //            Log.i(ACTIVITY_NAME, "Return to StartActivity.onActivityResult");
-//        if(responseCode == Activity.RESULT_OK){
+//        if (responseCode == Activity.RESULT_OK) {
 //            String messagePassed = data.getStringExtra("Response");
 //            Toast toast = Toast.makeText(this, messagePassed, Toast.LENGTH_LONG); //this is the ListActivity
 //            toast.show(); //display your message box
 //        }
 //    }
 }
+

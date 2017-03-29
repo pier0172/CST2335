@@ -1,11 +1,16 @@
 package com.example.student.andoid;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -13,17 +18,28 @@ import android.widget.TextView;
  */
 
 public class MessageFragment extends Fragment {
-String message;
-    Long id;
+    private static final String ARG_PARAM1 = "ID";
+    String message;
+    long id; //long
     protected static final String ACTIVITY_NAME = "MessageFragment";
+    private long dbid;
+    Context parent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Step 3, create fragment onCreation, pass data from Intent Extras to FragmentTransction
-Bundle data = getArguments();
-       message = data.getString("MESSAGE");
+        Bundle data = getArguments();
+        message = data.getString("MESSAGE");
         id = data.getLong("ID");
+        dbid = data.getLong("DBID");
+        Log.d("DBID IN FRAGMENT", dbid +" ");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        parent = context;
     }
 
 
@@ -32,38 +48,36 @@ Bundle data = getArguments();
         //return super.onCreateView(inflater, container, savedInstanceState);
         View gui = inflater.inflate(R.layout.fragment_fragment_layout1, null); // or messageDetail
 
-        TextView messageDetailsText = (TextView)gui.findViewById(R.id.messageDetailsText);
+        TextView messageDetailsText = (TextView) gui.findViewById(R.id.messageDetailsText);
         messageDetailsText.setText("You clicked on message:" + message);
 
-        TextView iDMessageText = (TextView)gui.findViewById(R.id.iDMessageText);
+        TextView iDMessageText = (TextView) gui.findViewById(R.id.iDMessageText);
         iDMessageText.setText("You clicked on ID:" + id);
 
 
+        //  find button and add click listener
+        Button deleteMsgButton = (Button) gui.findViewById(R.id.deleteMessageButton);
 
-      //  find button and add click listener
-//        Button sendButton = (Button) findViewById(R.id.deleteMessageButton);
-//
-//
-//        sendButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Intent intent = new Intent(MessageFragment.this, ListItemsActivity.class);
-//                //startActivity(intent);
-//                getActivity().setResult(int resultCode, Intent data)
-//                startActivityForResult(intent,5);
-//
-//
-//                Log.i(ACTIVITY_NAME, "Return to StartActivity.onActivityResult");
-//
-//            }
-//
-//        });
+
+        deleteMsgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(getActivity().getClass() == ChatWindow.class){
+                   ((ChatWindow)getActivity()).deleteDb(id, dbid);
+                }else {
+                    Intent i = new Intent(getActivity(), ChatWindow.class);
+                    i.putExtra("DBID", dbid);
+                    i.putExtra("ID", id);
+                    getActivity().setResult(Activity.RESULT_OK, i);
+                    getActivity().finish();
+
+                }
+                }
+            });
 
 
         return gui;
     }
-
 }
-
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:id="@+id/main_menu">
+
+
+<item android:id="@+id/menu_1"
+android:title="@string/menu_item1"
+
+android:orderInCategory="100"
+app:showAsAction="always"
+    android:icon="@android:drawable/ic_menu_myplaces" />
+
+
+    <item android:id="@+id/menu_2"
+
+        app:showAsAction="always"
+        android:title="@string/menu_item2"
+        android:orderInCategory="200"
+        android:icon="@drawable/mr_ic_audiotrack_light" />
+
+
+    <item android:id="@+id/menu_3"
+        app:showAsAction="always"
+        android:title="@string/menu_item3"
+        android:orderInCategory="300"
+        android:icon="@android:drawable/ic_menu_edit" />
+
+
+    <item android:id="@+id/menu_4"
+        app:showAsAction="never"
+        android:title="@string/menu_item4"
+        android:orderInCategory="300" />
+
+</menu>
