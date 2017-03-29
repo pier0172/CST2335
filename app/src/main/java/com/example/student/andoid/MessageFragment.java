@@ -26,6 +26,12 @@ public class MessageFragment extends Fragment {
     Context parent;
     public ChatWindow window;
 
+    public MessageFragment(){
+        super();
+    }
+    public MessageFragment(ChatWindow window){
+        this.window = window;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +74,8 @@ public class MessageFragment extends Fragment {
 //                   ((ChatWindow)getActivity()).deleteDb(id, dbid);
                 if (window !=null){
                     window.deleteDb();
+                    window.removeFragment(MessageFragment.this);
+
                 }else {
                     Intent i = new Intent(getActivity(), ChatWindow.class);
                     i.putExtra("DBID", dbid);

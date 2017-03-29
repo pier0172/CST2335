@@ -7,7 +7,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,25 +134,28 @@ public class ChatWindow extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: " + i + " " + l);
 
 
-                Bundle bun = new Bundle();
-                bun.putLong("ID", l );//l is the database ID of selected item
-                bun.putString("MESSAGE", arrayList.get(i));
+//                Bundle bun = new Bundle();
+//                bun.putLong("ID", l );//l is the database ID of selected item
+//                bun.putString("MESSAGE", arrayList.get(i));
 
+                Intent intnt = new Intent(ChatWindow.this, MessageDetails.class);
+                intnt.putExtra("ID" , l); //pass the Database ID to next activity
+                intnt.putExtra("MESSAGE" , arrayList.get(i)); //pass the Database meessagge to next activity
                 //step 2, if a tablet, insert fragment into FrameLayout, pass data
                 if(isTablet) {
-                    MessageFragment frag = new MessageFragment();  //?? not sure
+                    MessageFragment frag = new MessageFragment(ChatWindow.this);  //?? not sure
 
-                    frag.setArguments(bun);
-
+                    //frag.setArguments(bun);
+                    frag.setArguments(intnt.getExtras());
 
                     getFragmentManager().beginTransaction().replace(R.id.frame, frag).commit();  // was fragmentholder
                 }
                 //step 3 if a phone, transition to empty Activity that has FrameLayout
                 else //isPhone
                 {
-                    Intent intnt = new Intent(ChatWindow.this, MessageDetails.class);
-                    intnt.putExtra("ID" , l); //pass the Database ID to next activity
-                    intnt.putExtra("MESSAGE" , arrayList.get(i)); //pass the Database meessagge to next activity
+//                    Intent intnt = new Intent(ChatWindow.this, MessageDetails.class);
+//                    intnt.putExtra("ID" , l); //pass the Database ID to next activity
+//                    intnt.putExtra("MESSAGE" , arrayList.get(i)); //pass the Database meessagge to next activity
                     startActivityForResult(intnt, 5); //go to view fragment details
                 }
             }
@@ -238,9 +245,13 @@ public class ChatWindow extends AppCompatActivity {
 //    }
 
 
-    // remove fragment()  ???????????????????????????????????????????????
-    //fragment transaction
-    //fragment manager
+   public void removeFragment(Fragment f){
+       FragmentManager fm = getFragmentManager();
+       FragmentTransaction ft = fm.beginTransaction();
+       ft.remove(f);
+       ft.commit();
+
+   }
 
     //lab7 #8
 
