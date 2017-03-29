@@ -22,8 +22,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import static android.R.id.message;
-
 public class ChatWindow extends AppCompatActivity {
 
     private static final String ACTIVITY_NAME = "ChatWindow";
@@ -38,6 +36,9 @@ public class ChatWindow extends AppCompatActivity {
     private boolean isTablet;
     private static String TAG = "LISTVIEW";
     ChatAdapter messageAdapter;
+    private Cursor results;
+    int index;
+    long dbid;
 
     ArrayList<String> arrayList = new ArrayList<String>();
 
@@ -50,12 +51,12 @@ public class ChatWindow extends AppCompatActivity {
 
         setContentView(R.layout.activity_chat_window); //chooses tablet or phone layout
 
-        frameLayout = (FrameLayout) findViewById(R.id.frame);
-        if(frameLayout == null)
-            checkFrameExist = false;
-        else
-            checkFrameExist = true;
-
+//        frameLayout = (FrameLayout) findViewById(R.id.frame);
+//        if(frameLayout == null)
+//            checkFrameExist = false;
+//        else
+//            checkFrameExist = true;
+        isTablet = (findViewById(R.id.frame) != null); //find out if this is a phone or tablet
 
         editChatText = (EditText) findViewById(R.id.editChatText);
 
@@ -74,7 +75,7 @@ public class ChatWindow extends AppCompatActivity {
 
 
         // lab5
-        Cursor results = db.query(false, chatDatabaseHelper.TABLE_NAME,
+         results = db.query(false, chatDatabaseHelper.TABLE_NAME,
                 new String[]{chatDatabaseHelper.KEY_ID, chatDatabaseHelper.KEY_MESSAGE},
                 chatDatabaseHelper.KEY_MESSAGE + " not null", null, null, null, null, null);   //NOT SURE
         int rows = results.getCount(); //number of rows returned
@@ -124,6 +125,8 @@ public class ChatWindow extends AppCompatActivity {
         theList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                index = i;
+                dbid= messageAdapter.getItemId(i);
                 Log.d(TAG, "onItemClick: " + i + " " + l);
 
 
@@ -138,15 +141,15 @@ public class ChatWindow extends AppCompatActivity {
                     frag.setArguments(bun);
 
 
-                    getFragmentManager().beginTransaction().add(R.id.frame, frag).commit();  // was fragmentholder
+                    getFragmentManager().beginTransaction().replace(R.id.frame, frag).commit();  // was fragmentholder
                 }
                 //step 3 if a phone, transition to empty Activity that has FrameLayout
                 else //isPhone
                 {
                     Intent intnt = new Intent(ChatWindow.this, MessageDetails.class);
                     intnt.putExtra("ID" , l); //pass the Database ID to next activity
-                    intnt.putExtra("Message" , message); //pass the Database meessagge to next activity
-                    startActivity(intnt); //go to view fragment details
+                    intnt.putExtra("MESSAGE" , arrayList.get(i)); //pass the Database meessagge to next activity
+                    startActivityForResult(intnt, 5); //go to view fragment details
                 }
             }
         });
@@ -154,7 +157,7 @@ public class ChatWindow extends AppCompatActivity {
         isTablet = (findViewById(R.id.frame) != null); //find out if this is a phone or tablet
 
 
-        messageAdapter.notifyDataSetChanged(); //tells the list to update the data             not--sure
+       // messageAdapter.notifyDataSetChanged(); //tells the list to update the data             not--sure
 
     }
 
@@ -172,6 +175,7 @@ public class ChatWindow extends AppCompatActivity {
         }
 
 
+
         //#6
         public int getCount() {
             return arrayList.size();
@@ -182,7 +186,11 @@ public class ChatWindow extends AppCompatActivity {
             //return theList.get(position);
             return arrayList.get(position);
         }
+        public long getItemId(int position){
+            results.moveToPosition(position);
 
+            return results.getLong(results.getColumnIndex(chatDatabaseHelper.KEY_ID));
+        }
 
         public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -206,24 +214,41 @@ public class ChatWindow extends AppCompatActivity {
 
     }
 
-    public void deleteDb(long index, long dbid){
+   // public void deleteDb(long index, long dbid){
+    public void deleteDb(){
+
+
         Log.d("INDEX LOOKS: ", index+ "");
-        arrayList.remove(index);
+
         Log.d("DBID LOOKS: ", dbid+ ""); //dbid
         db.delete(ChatDatabaseHelper.TABLE_NAME , ChatDatabaseHelper.KEY_ID + "="+ dbid, null); //databse Name?????????????  KEY_MESSAGE  TABLE_NAME
+        arrayList.remove(index);
+        Cursor results = db.query(false, chatDatabaseHelper.TABLE_NAME,
+                new String[]{chatDatabaseHelper.KEY_ID, chatDatabaseHelper.KEY_MESSAGE},
+                chatDatabaseHelper.KEY_MESSAGE + " not null", null, null, null, null, null);
         messageAdapter.notifyDataSetChanged();
     }
 
+//        public void deleteDb(){
+//        //Log.d("INDEX LOOKS: "+ "");
+//        //arrayList.remove(index);
+//        //Log.d("DBID LOOKS: ", dbid+ ""); //dbid
+//        db.delete(ChatDatabaseHelper.TABLE_NAME , ChatDatabaseHelper.KEY_ID + "="+ dbid, null); //databse Name?????????????  KEY_MESSAGE  TABLE_NAME
+//        messageAdapter.notifyDataSetChanged();
+//    }
+
+
+    // remove fragment()  ???????????????????????????????????????????????
+    //fragment transaction
+    //fragment manager
+
     //lab7 #8
 
-//    public void onActivityResult(int requestCode, int responseCode, Intent data) {
-//        if (requestCode == 5)
-//            Log.i(ACTIVITY_NAME, "Return to StartActivity.onActivityResult");
-//        if (responseCode == Activity.RESULT_OK) {
-//            String messagePassed = data.getStringExtra("Response");
-//            Toast toast = Toast.makeText(this, messagePassed, Toast.LENGTH_LONG); //this is the ListActivity
-//            toast.show(); //display your message box
-//        }
-//    }
+    public void onActivityResult(int requestCode, int responseCode, Intent data) {
+        super.onActivityResult(requestCode,responseCode,data);
+        if (requestCode == 5)
+            Log.i(ACTIVITY_NAME, "Return to StartActivity.onActivityResult");
+       deleteDb( );
+    }
 }
 

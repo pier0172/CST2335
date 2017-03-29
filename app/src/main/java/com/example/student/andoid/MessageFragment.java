@@ -20,10 +20,11 @@ import android.widget.TextView;
 public class MessageFragment extends Fragment {
     private static final String ARG_PARAM1 = "ID";
     String message;
-    long id; //long
+    int id; //long
     protected static final String ACTIVITY_NAME = "MessageFragment";
     private long dbid;
     Context parent;
+    public ChatWindow window;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class MessageFragment extends Fragment {
         //Step 3, create fragment onCreation, pass data from Intent Extras to FragmentTransction
         Bundle data = getArguments();
         message = data.getString("MESSAGE");
-        id = data.getLong("ID");
+        id = data.getInt("ID");
         dbid = data.getLong("DBID");
         Log.d("DBID IN FRAGMENT", dbid +" ");
     }
@@ -63,8 +64,10 @@ public class MessageFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(getActivity().getClass() == ChatWindow.class){
-                   ((ChatWindow)getActivity()).deleteDb(id, dbid);
+//                if(getActivity().getClass() == ChatWindow.class){
+//                   ((ChatWindow)getActivity()).deleteDb(id, dbid);
+                if (window !=null){
+                    window.deleteDb();
                 }else {
                     Intent i = new Intent(getActivity(), ChatWindow.class);
                     i.putExtra("DBID", dbid);
