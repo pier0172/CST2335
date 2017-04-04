@@ -6,7 +6,8 @@
 
     <ImageView
 
-        android:icon="@drawable/mr_ic_audiotrack_light"
+
+        android:src="@drawable/lion_statue"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:scaleType="center"
